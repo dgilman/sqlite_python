@@ -1,49 +1,436 @@
 <!doctype html>
 <html>
-	<head>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+   <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<title>reveal.js</title>
+      <title>reveal.js</title>
 
-		<link rel="stylesheet" href="css/reset.css">
-		<link rel="stylesheet" href="css/reveal.css">
-		<link rel="stylesheet" href="css/theme/black.css">
+      <link rel="stylesheet" href="css/reset.css">
+      <link rel="stylesheet" href="css/reveal.css">
+      <link rel="stylesheet" href="css/theme/night.css">
 
-		<!-- Theme used for syntax highlighting of code -->
-		<link rel="stylesheet" href="lib/css/monokai.css">
+      <!-- Theme used for syntax highlighting of code -->
+      <link rel="stylesheet" href="lib/css/monokai.css">
 
-		<!-- Printing and PDF exports -->
-		<script>
-			var link = document.createElement( 'link' );
-			link.rel = 'stylesheet';
-			link.type = 'text/css';
-			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
-			document.getElementsByTagName( 'head' )[0].appendChild( link );
-		</script>
-	</head>
-	<body>
-		<div class="reveal">
-			<div class="slides">
-				<section>Slide 1</section>
-				<section>Slide 2</section>
-			</div>
-		</div>
+      <!-- Printing and PDF exports -->
+      <script>
+         var link = document.createElement( 'link' );
+link.rel = 'stylesheet';
+link.type = 'text/css';
+link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+document.getElementsByTagName( 'head' )[0].appendChild( link );
+      </script>
+   </head>
+   <body>
+      <div class="reveal">
+         <div class="slides">
+            <section>
+               <h2>Python and SQLite, Together</h3>
+               <h4>David Gilman</h4>
+               <br/>
+               <h4><a href="https://www.leantaas.com/">LeanTaaS</a></h4>
+               <h4><a href="https://pro-football-history.com">Pro Football History.com</a></h4>
+            </section>
 
-		<script src="js/reveal.js"></script>
+            <section>
+               <h3>Why should you use SQLite?</h3>
+               <h4>It does a lot for you.</h4>
+               <br/>
+               <p>This stuff is hard to implement</p>
+               <p>SQLite's features set a high bar</p>
+            </section>
 
-		<script>
-			// More info about config & dependencies:
-			// - https://github.com/hakimel/reveal.js#configuration
-			// - https://github.com/hakimel/reveal.js#dependencies
-			Reveal.initialize({
-				dependencies: [
-					{ src: 'plugin/markdown/marked.js' },
-					{ src: 'plugin/markdown/markdown.js' },
-					{ src: 'plugin/notes/notes.js', async: true },
-					{ src: 'plugin/highlight/highlight.js', async: true }
-				]
-			});
-		</script>
-	</body>
+            <section>
+               <h3>Why should you use SQLite?</h3>
+               <h4>It's an investment in yourself and your career.</h4>
+               <br/>
+               <p>Learn the common subset of SQL and relational databases</p>
+               <p>What you learn with SQLite can be used on future projects, even with different databases</p>
+            </section>
+
+            <section>
+               <h3>Why should you use SQLite?</h3>
+               <h4>It helps you give structure to your code.</h4>
+               <br/>
+               <p>Typed data has a minimal, efficient representation</p>
+               <p>Third normal form keeps complexity down across the code</p>
+               <p>Python makes it easy to be careless so embrace things that give you structure</p>
+            </section>
+
+            <section>
+               <h3>Why should you use SQLite?</h3>
+               <h4>It gives you transactions.</h4>
+               <br/>
+               <p>ACID is always welcome</p>
+               <p>Protects you from production bugs like bad data, system failure</p>
+               <p>Speeds up iterative development</p>
+            </section>
+
+            <section>
+               <h3>Why should you use SQLite?</h3>
+               <h4>It optimizes the I/O and CPU used for your computation.</h4>
+               <br/>
+               <p>Implementing a query planner, optimizer, and B-tree index is hard. Use the experts' code!</p>
+            </section>
+
+            <section>
+               <h3>Why should you use SQLite?</h3>
+               <h4>It plays nice with other systems.</h4>
+               <br/>
+               <p>SQLite is usuable from every language</p>
+               <p>Distributing data is as easy as copying a file</p>
+            </section>
+
+            <section>
+               <h3>Why should you use SQLite?</h3>
+               <h4>It pairs well with Python.</h4>
+               <br/>
+               <p>Use the NumPy/Pandas design pattern of moving core data processing to well-tested and optimized C code</p>
+               <p>Available since Python 2.5 (released 2006)</p>
+            </section>
+
+            <section>
+               <h4>It pairs well with Python:</h4>
+               <h4>
+                  Python concurrency model
+               </h4>
+               <br/>
+               <p>The <a href="https://docs.python.org/3.7/glossary.html#term-global-interpreter-lock">GIL</a> serlializes execution of Python code</p>
+               <p>This is an intentional design decision</p>
+            </section>
+
+            <section>
+               <h4>It pairs well with Python:</h4>
+               <h4>SQLite concurrency model</h4>
+               <table>
+                  <thead>
+                     <tr>
+                        <th></th>
+                        <th>
+                           Default (Old)
+                        </th>
+                        <th>
+                           New
+                        </th>
+                     </tr>
+                  </thead>
+                  <tbody>
+                     <tr>
+                        <td>
+                           <code>PRAGMA journal_mode=</code>
+                        </td>
+                        <td>
+                           <code>DELETE</code>
+                        </td>
+                        <td>
+                           <code>WAL</code>
+                        </td>
+                     </tr>
+                     <tr>
+                        <td>
+                           Concurrent reader processes
+                        </td>
+                        <td>
+                           <span style="color: lightgreen">✔</span>
+                        </td>
+                        <td>
+                           <span style="color: lightgreen">✔</span>
+                        </td>
+                     </tr>
+                     <tr>
+                        <td>
+                           Concurrent writer processes
+                        </td>
+                        <td>
+                           <span style="color: red">✘</span>
+                        </td>
+                        <td>
+                           <span style="color: red">✘</span>
+                        </td>
+                     </tr>
+                     <tr>
+                        <td>
+                           Reading while writing
+                        </td>
+                        <td>
+                           <span style="color: red">✘</span>
+                        </td>
+                        <td>
+                           <span style="color: lightgreen">✔</span>
+                        </td>
+                     </tr>
+                  </tbody>
+               </table>
+            </section>
+
+            <section>
+               <h4>It pairs well with Python:</h4>
+               <br/>
+               <p>It can't do everything but helps your Python project scale</p>
+               <p>As the volume of data increases SQLite gives you I/O and query execution optimizations</p>
+               <p>As you benefit from concurrency SQLite gives you sane locking and avoids the GIL</p>
+            </section>
+
+            <section>
+               <h3>Things to know about SQLite</h3>
+               <h4>Type affinity</h4>
+               <br/>
+
+               <p>Affinity is how data is stored on disk</p>
+               <p>Any kind of value can be stored in any column</p>
+               <p>Column types are just a suggestion on what affinity to use</p>
+            </section>
+
+            <section>
+               <h3>Things to know about SQLite</h3>
+               <h4>B-trees</h4>
+               <br/>
+
+               <p>Table data is kept in a <a href="https://cstack.github.io/db_tutorial/parts/part7.html">B-tree</a></p>
+               <p>The key for a table tree is the rowid</p>
+               <p>Use <code>INTEGER PRIMARY KEY</code> whenever possible</p>
+            </section>
+
+            <section>
+               <p>When no indices are available to aid the evaluation of a query, SQLite might create an automatic index that lasts only for the duration of a single SQL statement. [...]</p>
+            </section>
+
+            <section>
+               <h3>Things to know about SQLite</h3>
+               <h4>Automatic indexing</h4>
+               <br/>
+
+               <p>The query planner can create a temporary index</p>
+               <p>This can be disabled</p>
+               <p>Read the logs to find index suggestions</p>
+            </section>
+
+            <section>
+               <p>[...] Since the cost of constructing the automatic index is $O(N\log{}N)$ (where $N$ is the number of entries in the table) and the cost of doing a full table scan is only $O(N)$, an automatic index will only be created if SQLite expects that the lookup will be run more than $\log{}N$ times during the course of the SQL statement.</p>
+            </section>
+
+
+            <section>
+               <h4>Time complexity, nested for loop</h4>
+               <table>
+                  <thead>
+                     <tr>
+                        <th>Big O</th>
+                        <th>Step</th>
+                        <th>a=10<sup>5</sup>, b=10<sup>5</sup></th>
+                        <th>a=50, b=10<sup>5</sup></th>
+                        <th>a=3, b=10<sup>5</sup></th>
+                     </tr>
+                  </thead>
+                  <tbody>
+                     <tr>
+                        <td>$O(ab)$</td>
+                        <td>Loop</td>
+                        <td>10<sup>10</sup></td>
+                        <td>10<sup>6.7</sup></td>
+                        <td>10<sup>5.5</sup></td>
+                     </tr>
+                  </tbody>
+               </table>
+            </section>
+            <section>
+               <h4>Time complexity, index join</h4>
+               <table>
+                  <thead>
+                     <tr>
+                        <th>Big O</th>
+                        <th>Step</th>
+                        <th>a=10<sup>5</sup>, b=10<sup>5</sup></th>
+                        <th>a=50, b=10<sup>5</sup></th>
+                        <th>a=3, b=10<sup>5</sup></th>
+                     </tr>
+                  </thead>
+                  <tbody>
+                     <tr>
+                        <td>$O(b\log{}b)$</td>
+                        <td>Index creation</td>
+                        <td>10<sup>5.7</sup></td>
+                        <td>10<sup>5.7</sup></td>
+                        <td>10<sup>5.7</sup></td>
+                     </tr>
+                     <tr>
+                        <td>$O(a\log{}b)$</td>
+                        <td>Index join</td>
+                        <td>10<sup>5.7</sup></td>
+                        <td>250</td>
+                        <td>15</td>
+                     </tr>
+                     <tr>
+                        <td></td>
+                        <td>Sum</td>
+                        <td>10<sup>6.0</sup></td>
+                        <td>10<sup>5.7</sup></td>
+                        <td>10<sup>5.7</sup></td>
+                     </tr>
+                  </tbody>
+               </table>
+            </section>
+            <section>
+               <h4>Time complexity, delta</h4>
+               <table>
+                  <thead>
+                     <tr>
+                        <th>Join method</th>
+                        <th>a=10<sup>5</sup>, b=10<sup>5</sup></th>
+                        <th>a=50, b=10<sup>5</sup></th>
+                        <th>a=3, b=10<sup>5</sup></th>
+                     </tr>
+                  </thead>
+                  <tbody>
+                     <tr>
+                        <td>Nested for loop</td>
+                        <td>10<sup>10</sup></td>
+                        <td>10<sup>6.7</sup></td>
+                        <td>10<sup>5.5</sup></td>
+                     </tr>
+                     <tr>
+                        <td>Automatic index</td>
+                        <td>10<sup>6.0</sup></td>
+                        <td>10<sup>5.7</sup></td>
+                        <td>10<sup>5.7</sup></td>
+                     </tr>
+                     <tr>
+                        <td></td>
+                        <td><span style="color: lightgreen">✔</span></td>
+                        <td><span style="color: lightgreen">✔</span></td>
+                        <td><span style="color: red">✘</span></td>
+                     </tr>
+                  </tbody>
+               </table>
+            </section>
+
+            <section>
+               <h2>The lesson?</h2>
+               <h3>$O(n^2)$ sucks!</h3>
+            </section>
+
+            <section>
+               <h3>Things to know about SQLite</h3>
+               <h4>Automatic indexing</h4>
+               <br/>
+
+               <p>Up-to-date table statistics helps</p>
+               <p>The query planner tries different join orders, which helps</p>
+               <p>This is the SQLite version of a hash join</p>
+            </section>
+
+            <section>
+               <h3>Things to know about SQLite</h3>
+               <h4>Statistics and vacuuming</h4>
+               <br/>
+
+               <p><code>ANALYSE;</code></p>
+               <p><code>VACUUM;</code></p>
+               <p>Repacked databases are good for the data warehouse design pattern</p>
+            </section>
+
+            <section>
+               <h3>Things to know about SQLite</h3>
+               <h4>Other features</h4>
+               <br/>
+
+               <p>FTS3, FTS4 and FTS5</p>
+               <p><code>PRAGMA foreign_keys = ON;</code></p>
+            </section>
+
+            <section>
+               <h3>Things to know about Python</h3>
+               <h4>Serializing types</h4>
+               <br/>
+
+               <p><code>register_adapter(type, callable)</code></p>
+               <p>Register a callback to serialize instances of <code>type</code> to <code>int</code>, <code>float</code>, <code>str</code>, or <code>bytes</code>.
+               <p>I've done JSON serialization and compression with this</p>
+               <p><code>__conform__</code></p>
+            </section>
+
+            <section>
+               <h3>Things to know about Python</h3>
+               <h4>Serializing types</h4>
+               <br/>
+
+               <p><code>register_converter(typename, callable)</code></p>
+               <p>Register a callback to deserialize database types of name <code>typename</code> into Python objects.</code>
+               <p>But how do you know what the database type is?</p>
+            </section>
+
+            <section>
+               <h3>Things to know about Python</h3>
+               <h4>Serializing types</h4>
+               <br/>
+
+               <p><code>sqlite3.connect("db", detect_types=PARSE_DECLTYPES)</code></p>
+               <br/>
+               <p>Look at the column's type definition and pass that to <code>register_converter</code></p>
+            </section>
+
+            <section>
+               <h3>Things to know about Python</h3>
+               <h4>Serializing types</h4>
+               <br/>
+
+               <p><code>sqlite3.connect("db", detect_types=PARSE_COLNAMES)</code></p>
+               <br/>
+               <p>Get the <code>register_converter</code> type name from <code>SELECT foo AS "x [mytype]" ...</code></p>
+            </section>
+
+            <section>
+               <h3>Things to know about Python</h3>
+               <h4>Serializing types</h4>
+               <br/>
+
+               <p><code>datetime.datetime</code> and <code>date</code> have a default <code>.isoformat()</code> serialization</p>
+               <p><code>2012-12-12T12:12:12.123456</code>
+               <p>Sensible lexicographical ordering and binning (<code>LIKE '2019-01-01%'</code>)</p>
+               <p>Supported by sqlite's (few) datetime functions</p>
+            </section>
+
+            <section>
+               <h3>Things to know about Python</h3>
+               <h4>Serializing types</h4>
+               <br/>
+
+               <p>Can't do math</p>
+               <p>Space inefficient</p>
+               <p><code>strptime()</code> is slow</p>
+               <p>Example for adapting <code>datetime</code> to an integer (UNIX timestamp) is in the standard library documentation</p>
+            </section>
+
+            <section>
+               <h3>Things to know about Python</h3>
+               <h4>Serializing types</h4>
+               <br/>
+
+               <p>Memoization is often useful</p>
+               <p><code>functools.lru_cache</code></p>
+               <p>Can't mutate types</p>
+            </section>
+
+
+         </div>
+      </div>
+
+      <script src="js/reveal.js"></script>
+
+      <script>
+         // More info about config & dependencies:
+         // - https://github.com/hakimel/reveal.js#configuration
+         // - https://github.com/hakimel/reveal.js#dependencies
+         Reveal.initialize({
+            dependencies: [
+               { src: 'plugin/markdown/marked.js' },
+               { src: 'plugin/markdown/markdown.js' },
+               { src: 'plugin/notes/notes.js', async: true },
+               { src: 'plugin/highlight/highlight.js', async: true },
+               { src: 'plugin/math/math.js', async: true }
+            ]
+         });
+      </script>
+   </body>
 </html>
