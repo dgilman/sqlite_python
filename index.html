@@ -118,7 +118,7 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
                   <tbody>
                      <tr>
                         <td>
-                           <code>PRAGMA journal_mode=</code>
+                           <a href="https://www.sqlite.org/pragma.html#pragma_journal_mode"><code>PRAGMA journal_mode=</code></a>
                         </td>
                         <td>
                            <code>DELETE</code>
@@ -335,8 +335,8 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
                <h4>Other features</h4>
                <br/>
 
-               <p>FTS3, FTS4 and FTS5</p>
-               <p><code>PRAGMA foreign_keys = ON;</code></p>
+               <p><a href="https://www.sqlite.org/fts3.html">FTS3, FTS4</a> and <a href="https://sqlite.org/fts5.html">FTS5</a></p>
+               <p><a href="https://www.sqlite.org/pragma.html#pragma_foreign_keys"><code>PRAGMA foreign_keys = ON;</code></a></p>
             </section>
 
             <section>
@@ -382,7 +382,7 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
 
             <section>
                <h3>Things to know about Python</h3>
-               <h4>Serializing types</h4>
+               <h4>Serializing types: datetime</h4>
                <br/>
 
                <p><code>datetime.datetime</code> and <code>date</code> have a default <code>.isoformat()</code> serialization</p>
@@ -393,10 +393,10 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
 
             <section>
                <h3>Things to know about Python</h3>
-               <h4>Serializing types</h4>
+               <h4>Serializing types: datetime</h4>
                <br/>
 
-               <p>Can't do math</p>
+               <p>Can't do math on a string</p>
                <p>Space inefficient</p>
                <p><code>strptime()</code> is slow</p>
                <p>Example for adapting <code>datetime</code> to an integer (UNIX timestamp) is in the standard library documentation</p>
@@ -407,11 +407,63 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
                <h4>Serializing types</h4>
                <br/>
 
-               <p>Memoization is often useful</p>
+               <p>Memoizing the adapter and converter functions is often a speed and memory win in data warehousing projects</p>
                <p><code>functools.lru_cache</code></p>
-               <p>Can't mutate types</p>
+               <p>You can't mutate cached values but that typically isn't a problem</p>
             </section>
 
+            <section>
+               <h3>Things to know about Python</h3>
+               <h4><code>Connection.row_factory</code></h4>
+               <br/>
+               <p>Implement your own constructor for query results</p>
+               <p><code>sqlite3.Row</code> implements a dict-like interface</p>
+               <p>A <a href="https://stackoverflow.com/a/48359027/296239">NamedTuple</a> factory isn't hard to implement</p>
+               <p>Anyone want to contribute a dataclass factory to the standard library?</p>
+            </section>
+
+            <section>
+            <h2>Some personal projects</h2>
+            </section>
+
+            <section>
+            <h3><a href="https://gilslotd.com/blog/lessons_learned_porting_sql_server_sqlite">Lessons learned porting from SQL Server to SQLite</a></h3>
+            </section>
+
+            <section>
+            <h3>Lessons learned porting from SQL Server to SQLite</h3>
+            <br/>
+            <p><a href="https://en.wikipedia.org/wiki/Hybrid_fiber-coaxial">Hybrid fiber-coaxial plant</a></p>
+            <p>Wavelength-division multiplexing/frequency-divison multiplexing</p>
+            <p>DOCSIS</p>
+            <p>Node splitting</p>
+            </section>
+
+            <section>
+            <h3>Lessons learned porting from SQL Server to SQLite</h3>
+            <br/>
+            <p>Collations</p>
+            <p>Clustered indexes/merge joins and the <code>rowid</code></p>
+            <p>Memoization</p>
+            <p>Materializing subqueries</p>
+            <p>Database functions</p>
+            </section>
+
+            <section>
+            <h3>Inger</h3>
+            <br/>
+            <p>events.sqlite3: 34GB, 67MM rows of gzipped JSON, 15 minutes to SELECT COUNT(*)</p>
+            <p>db.sqlite3: 1.2GB, 3NF integers and strings</p>
+            </section>
+
+            <section>
+            <h3>Inger</h3>
+            <h4>Design considerations</h4>
+            <br/>
+            <p>JSON and gzip decoding is embarassingly parallel</p>
+            <p>Primary keys need to be looked up centrally</p>
+            <p>Heavy cache rates in the workers and bulk inserts</p>
+            </section>
 
          </div>
       </div>
