@@ -26,7 +26,7 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
       <div class="reveal">
          <div class="slides">
             <section>
-               <h2>Python and SQLite, Together</h3>
+               <h2>Using SQLite with Python</h3>
                <h4>David Gilman</h4>
                <br/>
                <h4><a href="https://www.leantaas.com/">LeanTaaS</a></h4>
@@ -34,10 +34,14 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
             </section>
 
             <section>
+               <h2>Why should you use SQLite?</h2>
+            </section>
+
+            <section>
                <h3>Why should you use SQLite?</h3>
                <h4>It does a lot for you.</h4>
                <br/>
-               <p>This stuff is hard to implement</p>
+               <p>Implementing a query planner, optimizer, executor and B-tree index is hard. Use the experts' code!</p>
                <p>SQLite's features set a high bar</p>
             </section>
 
@@ -69,13 +73,6 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
 
             <section>
                <h3>Why should you use SQLite?</h3>
-               <h4>It optimizes the I/O and CPU used for your computation.</h4>
-               <br/>
-               <p>Implementing a query planner, optimizer, and B-tree index is hard. Use the experts' code!</p>
-            </section>
-
-            <section>
-               <h3>Why should you use SQLite?</h3>
                <h4>It plays nice with other systems.</h4>
                <br/>
                <p>SQLite is usuable from every language</p>
@@ -98,6 +95,7 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
                <br/>
                <p>The <a href="https://docs.python.org/3.7/glossary.html#term-global-interpreter-lock">GIL</a> serlializes execution of Python code</p>
                <p>This is an intentional design decision</p>
+               <p>Air traffic control</p>
             </section>
 
             <section>
@@ -165,182 +163,37 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
             </section>
 
             <section>
-               <h4>It pairs well with Python:</h4>
+               <h2>Using SQLite and Python together</h2>
+            </section>
+
+            <section>
+               <h4>The basics</h4>
                <br/>
-               <p>It can't do everything but helps your Python project scale</p>
-               <p>As the volume of data increases SQLite gives you I/O and query execution optimizations</p>
-               <p>As you benefit from concurrency SQLite gives you sane locking and avoids the GIL</p>
+               <pre><code class="hljs python">import sqlite3
+conn = sqlite3.connect("db.sqlite3")
+cur = conn.cursor()
+with conn:
+   cur.execute("""
+      SELECT actor_id, actor_name
+      FROM actor
+      WHERE actor_type = ?""", ("Stage",))
+   for actor_id, actor_name in cur:
+      print(f"{actor_name} ({actor_id})")
+               </code></pre>
             </section>
 
             <section>
-               <h3>Things to know about SQLite</h3>
-               <h4>Type affinity</h4>
+               <h3>Using SQLite and Python together</h3>
+               <h4><code>Connection.row_factory</code></h4>
                <br/>
-
-               <p>Affinity is how data is stored on disk</p>
-               <p>Any kind of value can be stored in any column</p>
-               <p>Column types are just a suggestion on what affinity to use</p>
+               <p>Implement your own constructor for query results</p>
+               <p><code>sqlite3.Row</code> implements a dict-like interface</p>
+               <p>A <a href="https://stackoverflow.com/a/48359027/296239">NamedTuple</a> factory isn't hard to implement</p>
+               <p>Anyone want to contribute a dataclass factory to the standard library?</p>
             </section>
 
             <section>
-               <h3>Things to know about SQLite</h3>
-               <h4>B-trees</h4>
-               <br/>
-
-               <p>Table data is kept in a <a href="https://cstack.github.io/db_tutorial/parts/part7.html">B-tree</a></p>
-               <p>The key for a table tree is the rowid</p>
-               <p>Use <code>INTEGER PRIMARY KEY</code> whenever possible</p>
-            </section>
-
-            <section>
-               <p>When no indices are available to aid the evaluation of a query, SQLite might create an automatic index that lasts only for the duration of a single SQL statement. [...]</p>
-            </section>
-
-            <section>
-               <h3>Things to know about SQLite</h3>
-               <h4>Automatic indexing</h4>
-               <br/>
-
-               <p>The query planner can create a temporary index</p>
-               <p>This can be disabled</p>
-               <p>Read the logs to find index suggestions</p>
-            </section>
-
-            <section>
-               <p>[...] Since the cost of constructing the automatic index is $O(N\log{}N)$ (where $N$ is the number of entries in the table) and the cost of doing a full table scan is only $O(N)$, an automatic index will only be created if SQLite expects that the lookup will be run more than $\log{}N$ times during the course of the SQL statement.</p>
-            </section>
-
-
-            <section>
-               <h4>Time complexity, nested for loop</h4>
-               <table>
-                  <thead>
-                     <tr>
-                        <th>Big O</th>
-                        <th>Step</th>
-                        <th>a=10<sup>5</sup>, b=10<sup>5</sup></th>
-                        <th>a=50, b=10<sup>5</sup></th>
-                        <th>a=3, b=10<sup>5</sup></th>
-                     </tr>
-                  </thead>
-                  <tbody>
-                     <tr>
-                        <td>$O(ab)$</td>
-                        <td>Loop</td>
-                        <td>10<sup>10</sup></td>
-                        <td>10<sup>6.7</sup></td>
-                        <td>10<sup>5.5</sup></td>
-                     </tr>
-                  </tbody>
-               </table>
-            </section>
-            <section>
-               <h4>Time complexity, index join</h4>
-               <table>
-                  <thead>
-                     <tr>
-                        <th>Big O</th>
-                        <th>Step</th>
-                        <th>a=10<sup>5</sup>, b=10<sup>5</sup></th>
-                        <th>a=50, b=10<sup>5</sup></th>
-                        <th>a=3, b=10<sup>5</sup></th>
-                     </tr>
-                  </thead>
-                  <tbody>
-                     <tr>
-                        <td>$O(b\log{}b)$</td>
-                        <td>Index creation</td>
-                        <td>10<sup>5.7</sup></td>
-                        <td>10<sup>5.7</sup></td>
-                        <td>10<sup>5.7</sup></td>
-                     </tr>
-                     <tr>
-                        <td>$O(a\log{}b)$</td>
-                        <td>Index join</td>
-                        <td>10<sup>5.7</sup></td>
-                        <td>250</td>
-                        <td>15</td>
-                     </tr>
-                     <tr>
-                        <td></td>
-                        <td>Sum</td>
-                        <td>10<sup>6.0</sup></td>
-                        <td>10<sup>5.7</sup></td>
-                        <td>10<sup>5.7</sup></td>
-                     </tr>
-                  </tbody>
-               </table>
-            </section>
-            <section>
-               <h4>Time complexity, delta</h4>
-               <table>
-                  <thead>
-                     <tr>
-                        <th>Join method</th>
-                        <th>a=10<sup>5</sup>, b=10<sup>5</sup></th>
-                        <th>a=50, b=10<sup>5</sup></th>
-                        <th>a=3, b=10<sup>5</sup></th>
-                     </tr>
-                  </thead>
-                  <tbody>
-                     <tr>
-                        <td>Nested for loop</td>
-                        <td>10<sup>10</sup></td>
-                        <td>10<sup>6.7</sup></td>
-                        <td>10<sup>5.5</sup></td>
-                     </tr>
-                     <tr>
-                        <td>Automatic index</td>
-                        <td>10<sup>6.0</sup></td>
-                        <td>10<sup>5.7</sup></td>
-                        <td>10<sup>5.7</sup></td>
-                     </tr>
-                     <tr>
-                        <td></td>
-                        <td><span style="color: lightgreen">✔</span></td>
-                        <td><span style="color: lightgreen">✔</span></td>
-                        <td><span style="color: red">✘</span></td>
-                     </tr>
-                  </tbody>
-               </table>
-            </section>
-
-            <section>
-               <h2>The lesson?</h2>
-               <h3>$O(n^2)$ sucks!</h3>
-            </section>
-
-            <section>
-               <h3>Things to know about SQLite</h3>
-               <h4>Automatic indexing</h4>
-               <br/>
-
-               <p>Up-to-date table statistics helps</p>
-               <p>The query planner tries different join orders, which helps</p>
-               <p>This is the SQLite version of a hash join</p>
-            </section>
-
-            <section>
-               <h3>Things to know about SQLite</h3>
-               <h4>Statistics and vacuuming</h4>
-               <br/>
-
-               <p><code>ANALYSE;</code></p>
-               <p><code>VACUUM;</code></p>
-               <p>Repacked databases are good for the data warehouse design pattern</p>
-            </section>
-
-            <section>
-               <h3>Things to know about SQLite</h3>
-               <h4>Other features</h4>
-               <br/>
-
-               <p><a href="https://www.sqlite.org/fts3.html">FTS3, FTS4</a> and <a href="https://sqlite.org/fts5.html">FTS5</a></p>
-               <p><a href="https://www.sqlite.org/pragma.html#pragma_foreign_keys"><code>PRAGMA foreign_keys = ON;</code></a></p>
-            </section>
-
-            <section>
-               <h3>Things to know about Python</h3>
+               <h3>Using SQLite and Python together</h3>
                <h4>Serializing types</h4>
                <br/>
 
@@ -351,27 +204,27 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
             </section>
 
             <section>
-               <h3>Things to know about Python</h3>
+               <h3>Using SQLite and Python together</h3>
                <h4>Serializing types</h4>
                <br/>
 
                <p><code>register_converter(typename, callable)</code></p>
                <p>Register a callback to deserialize database types of name <code>typename</code> into Python objects.</code>
-               <p>But how do you know what the database type is?</p>
+            <p>But how do you know what the database type is?</p>
             </section>
 
             <section>
-               <h3>Things to know about Python</h3>
+               <h3>Using SQLite and Python together</h3>
                <h4>Serializing types</h4>
                <br/>
 
                <p><code>sqlite3.connect("db", detect_types=PARSE_DECLTYPES)</code></p>
                <br/>
-               <p>Look at the column's type definition and pass that to <code>register_converter</code></p>
+               <p>Look at the column's type definition and pass that back to Python</p>
             </section>
 
             <section>
-               <h3>Things to know about Python</h3>
+               <h3>Using SQLite and Python together</h3>
                <h4>Serializing types</h4>
                <br/>
 
@@ -381,7 +234,7 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
             </section>
 
             <section>
-               <h3>Things to know about Python</h3>
+               <h3>Using SQLite and Python together</h3>
                <h4>Serializing types: datetime</h4>
                <br/>
 
@@ -399,11 +252,11 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
                <p>Can't do math on a string</p>
                <p>Space inefficient</p>
                <p><code>strptime()</code> is slow</p>
-               <p>Example for adapting <code>datetime</code> to an integer (UNIX timestamp) is in the standard library documentation</p>
+               <p>Example for adapting <code>datetime</code> to an integer (UNIX timestamp) is <a href="https://docs.python.org/3/library/sqlite3.html#using-adapters-to-store-additional-python-types-in-sqlite-databases">in the docs</a></p>
             </section>
 
             <section>
-               <h3>Things to know about Python</h3>
+               <h3>Using SQLite and Python together</h3>
                <h4>Serializing types</h4>
                <br/>
 
@@ -413,57 +266,53 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
             </section>
 
             <section>
-               <h3>Things to know about Python</h3>
-               <h4><code>Connection.row_factory</code></h4>
+               <h2>Where I've used SQLite</h2>
+            </section>
+
+            <section>
+               <img src="lib/whos_that_pokemon.png">
+            </section>
+
+            <section>
+               <h4><a href="https://en.wikipedia.org/wiki/Hybrid_fiber-coaxial">Hybrid fiber-coaxial plant</a></h4>
+               <img src="lib/hfc.png">
+            </section>
+
+            <section>
+               <h4><a href="https://archive.nanog.org/meetings/nanog57/presentations/Monday/mon.tutorial.Steenbergen.Optical.39.pdf">Everything You Always Wanted to Know About Optical Networking – But Were Afraid to Ask: Richard A Steenbergen</a></h4>
+            </section>
+
+            <section>
+               <h3><a href="https://gilslotd.com/blog/lessons_learned_porting_sql_server_sqlite">Lessons learned porting from SQL Server to SQLite</a></h3>
+            </section>
+
+            <section>
+               <h3>Lessons learned porting from SQL Server to SQLite</h3>
                <br/>
-               <p>Implement your own constructor for query results</p>
-               <p><code>sqlite3.Row</code> implements a dict-like interface</p>
-               <p>A <a href="https://stackoverflow.com/a/48359027/296239">NamedTuple</a> factory isn't hard to implement</p>
-               <p>Anyone want to contribute a dataclass factory to the standard library?</p>
+               <p>Collations</p>
+               <p>Clustered indexes/merge joins and the <code>rowid</code></p>
+               <p>Memoization</p>
+               <p>Materializing subqueries</p>
+               <p>Database functions</p>
             </section>
 
             <section>
-            <h2>Some personal projects</h2>
+               <h3>Inger</h3>
+               <br/>
+               <p>events.sqlite3: 34GB, 67MM rows of gzipped JSON, 15 minutes to SELECT COUNT(*)</p>
+               <p>db.sqlite3: 1.2GB, 3NF integers and strings</p>
             </section>
 
             <section>
-            <h3><a href="https://gilslotd.com/blog/lessons_learned_porting_sql_server_sqlite">Lessons learned porting from SQL Server to SQLite</a></h3>
+               <h3>Inger</h3>
+               <h4>Design considerations</h4>
+               <br/>
+               <p>JSON and gzip decoding is embarassingly parallel</p>
+               <p>Primary keys need to be looked up centrally</p>
+               <p>Heavy cache rates in the workers and bulk inserts</p>
             </section>
 
-            <section>
-            <h3>Lessons learned porting from SQL Server to SQLite</h3>
-            <br/>
-            <p><a href="https://en.wikipedia.org/wiki/Hybrid_fiber-coaxial">Hybrid fiber-coaxial plant</a></p>
-            <p>Wavelength-division multiplexing/frequency-divison multiplexing</p>
-            <p>DOCSIS</p>
-            <p>Node splitting</p>
-            </section>
 
-            <section>
-            <h3>Lessons learned porting from SQL Server to SQLite</h3>
-            <br/>
-            <p>Collations</p>
-            <p>Clustered indexes/merge joins and the <code>rowid</code></p>
-            <p>Memoization</p>
-            <p>Materializing subqueries</p>
-            <p>Database functions</p>
-            </section>
-
-            <section>
-            <h3>Inger</h3>
-            <br/>
-            <p>events.sqlite3: 34GB, 67MM rows of gzipped JSON, 15 minutes to SELECT COUNT(*)</p>
-            <p>db.sqlite3: 1.2GB, 3NF integers and strings</p>
-            </section>
-
-            <section>
-            <h3>Inger</h3>
-            <h4>Design considerations</h4>
-            <br/>
-            <p>JSON and gzip decoding is embarassingly parallel</p>
-            <p>Primary keys need to be looked up centrally</p>
-            <p>Heavy cache rates in the workers and bulk inserts</p>
-            </section>
 
          </div>
       </div>
