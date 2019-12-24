@@ -197,10 +197,8 @@ with conn:
                <h4>Serializing types</h4>
                <br/>
 
-               <p><code>register_adapter(type, callable)</code></p>
-               <p>Register a callback to serialize instances of <code>type</code> to <code>int</code>, <code>float</code>, <code>str</code>, or <code>bytes</code>.
-               <p>I've done JSON serialization and compression with this</p>
-               <p><code>__conform__</code></p>
+               <p><code>register_adapter</code>: Store Python objects in database</p>
+               <p><code>register_converter</code>: Re-hydrate Python objects from the database</p>
             </section>
 
             <section>
@@ -208,9 +206,8 @@ with conn:
                <h4>Serializing types</h4>
                <br/>
 
-               <p><code>register_converter(typename, callable)</code></p>
-               <p>Register a callback to deserialize database types of name <code>typename</code> into Python objects.</code>
-            <p>But how do you know what the database type is?</p>
+               <p><code>PARSE_DECLTYPES</code>: Get type definitions from CREATE TABLE</p>
+               <p><code>PARSE_COLNAMES</code>: Get type definitions from <code>SELECT x AS 'x [type]'</code></p>
             </section>
 
             <section>
@@ -218,19 +215,10 @@ with conn:
                <h4>Serializing types</h4>
                <br/>
 
-               <p><code>sqlite3.connect("db", detect_types=PARSE_DECLTYPES)</code></p>
-               <br/>
-               <p>Look at the column's type definition and pass that back to Python</p>
-            </section>
-
-            <section>
-               <h3>Using SQLite and Python together</h3>
-               <h4>Serializing types</h4>
-               <br/>
-
-               <p><code>sqlite3.connect("db", detect_types=PARSE_COLNAMES)</code></p>
-               <br/>
-               <p>Get the <code>register_converter</code> type name from <code>SELECT foo AS "x [mytype]" ...</code></p>
+               <p>Memoizing the adapter and converter functions is often a speed and memory win in data warehousing projects</p>
+               <p><code>functools.lru_cache</code></p>
+               <p>You can't mutate cached values but that typically isn't a problem</p>
+               <p>Candidates include <code>datetime</code>, <code>Decimal</code>
             </section>
 
             <section>
@@ -253,16 +241,6 @@ with conn:
                <p>Space inefficient</p>
                <p><code>strptime()</code> is slow</p>
                <p>Example for adapting <code>datetime</code> to an integer (UNIX timestamp) is <a href="https://docs.python.org/3/library/sqlite3.html#using-adapters-to-store-additional-python-types-in-sqlite-databases">in the docs</a></p>
-            </section>
-
-            <section>
-               <h3>Using SQLite and Python together</h3>
-               <h4>Serializing types</h4>
-               <br/>
-
-               <p>Memoizing the adapter and converter functions is often a speed and memory win in data warehousing projects</p>
-               <p><code>functools.lru_cache</code></p>
-               <p>You can't mutate cached values but that typically isn't a problem</p>
             </section>
 
             <section>
