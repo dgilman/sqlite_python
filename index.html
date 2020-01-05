@@ -39,6 +39,15 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
 
             <section>
                <h3>Why should you use SQLite?</h3>
+               <h4>It pairs well with Python.</h4>
+               <br/>
+               <p>Use the NumPy/Pandas design pattern of moving core data processing to well-tested and optimized C code</p>
+               <p>Available since Python 2.5 (released 2006)</p>
+            </section>
+
+
+            <section>
+               <h3>Why should you use SQLite?</h3>
                <h4>It does a lot for you.</h4>
                <br/>
                <p>Implementing a query planner, optimizer, executor and B-tree index is hard. Use the experts' code!</p>
@@ -57,7 +66,6 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
                <h3>Why should you use SQLite?</h3>
                <h4>It gives you transactions.</h4>
                <br/>
-               <p>ACID is always welcome</p>
                <p>Protects you from production bugs like bad data, system failure</p>
                <p>Speeds up iterative development</p>
             </section>
@@ -68,89 +76,6 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
                <br/>
                <p>SQLite is usuable from every language</p>
                <p>Distributing data is as easy as copying a file</p>
-            </section>
-
-            <section>
-               <h3>Why should you use SQLite?</h3>
-               <h4>It pairs well with Python.</h4>
-               <br/>
-               <p>Use the NumPy/Pandas design pattern of moving core data processing to well-tested and optimized C code</p>
-               <p>Available since Python 2.5 (released 2006)</p>
-            </section>
-
-            <section>
-               <h4>It pairs well with Python:</h4>
-               <h4>
-                  Python concurrency model
-               </h4>
-               <br/>
-               <p>The <a href="https://docs.python.org/3.7/glossary.html#term-global-interpreter-lock">GIL</a> serlializes execution of Python code</p>
-               <p>This is an intentional design decision</p>
-               <p>Air traffic control</p>
-            </section>
-
-            <section>
-               <h4>It pairs well with Python:</h4>
-               <h4>SQLite concurrency model</h4>
-               <table>
-                  <thead>
-                     <tr>
-                        <th></th>
-                        <th>
-                           Default (Old)
-                        </th>
-                        <th>
-                           New
-                        </th>
-                     </tr>
-                  </thead>
-                  <tbody>
-                     <tr>
-                        <td>
-                           <a href="https://www.sqlite.org/pragma.html#pragma_journal_mode"><code>PRAGMA journal_mode=</code></a>
-                        </td>
-                        <td>
-                           <code>DELETE</code>
-                        </td>
-                        <td>
-                           <code>WAL</code>
-                        </td>
-                     </tr>
-                     <tr>
-                        <td>
-                           Concurrent reader processes
-                        </td>
-                        <td>
-                           <span style="color: lightgreen">✔</span>
-                        </td>
-                        <td>
-                           <span style="color: lightgreen">✔</span>
-                        </td>
-                     </tr>
-                     <tr>
-                        <td>
-                           Concurrent writer processes
-                        </td>
-                        <td>
-                           <span style="color: red">✘</span>
-                        </td>
-                        <td>
-                           <span style="color: red">✘</span>
-                        </td>
-                     </tr>
-                     <tr>
-                        <td>
-                           Reading while writing
-                        </td>
-                        <td>
-                           <span style="color: red">✘</span>
-                        </td>
-                        <td>
-                           <span style="color: lightgreen">✔</span>
-                        </td>
-                     </tr>
-                  </tbody>
-               </table>
             </section>
 
             <section>
@@ -197,15 +122,6 @@ with conn:
 
                <p><code>register_adapter</code>: Store Python objects in database</p>
                <p><code>register_converter</code>: Re-hydrate Python objects from the database</p>
-            </section>
-
-            <section>
-               <h3>Using SQLite and Python together</h3>
-               <h4>Serializing types</h4>
-               <br/>
-
-               <p><code>PARSE_DECLTYPES</code>: Get type definitions from CREATE TABLE</p>
-               <p><code>PARSE_COLNAMES</code>: Get type definitions from <code>SELECT x AS 'x [type]'</code></p>
             </section>
 
             <section>
@@ -265,10 +181,19 @@ with conn:
                <h3>Lessons learned porting from SQL Server to SQLite</h3>
                <br/>
                <p>Collations</p>
-               <p>Clustered indexes/merge joins and the <code>rowid</code></p>
                <p>Memoization</p>
+               <p>Clustered indexes/merge joins and the <code>rowid</code></p>
                <p>Materializing subqueries</p>
-               <p>Database functions</p>
+            </section>
+
+            <section>
+               <h3>Lessons learned porting from SQL Server to SQLite</h3>
+               <h4>Improvements</h4>
+               <br/>
+               <p>A real programming language, in source control</p>
+               <p>Reliable automation</p>
+               <p>Many hours faster even if individual parts were slower</p>
+               <p>openpyxl replaced fragile Excel APIs</p>
             </section>
 
             <section>
