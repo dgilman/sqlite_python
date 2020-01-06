@@ -50,7 +50,7 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
                <h3>Why should you use SQLite?</h3>
                <h4>It does a lot for you.</h4>
                <br/>
-               <p>Implementing a query planner, optimizer, executor and B-tree index is hard. Use the experts' code!</p>
+               <p>Implementing a query planner, optimizer, executor and B-tree index is <a href="https://cstack.github.io/db_tutorial/">hard</a>. Use the experts' code!</p>
                <p>SQLite's features set a high bar</p>
             </section>
 
@@ -128,7 +128,7 @@ with conn:
                <h4>Serializing types</h4>
                <br/>
 
-               <p>Memoizing the adapter and converter functions is often a speed and memory win in data warehousing projects</p>
+               <p>Memoizing the adapter and converter functions is often a speed and memory win in ETL</p>
                <p><code>functools.lru_cache</code></p>
                <p>You can't mutate cached values but that typically isn't a problem</p>
                <p>Candidates include <code>datetime</code>, <code>Decimal</code>
@@ -180,10 +180,9 @@ with conn:
             <section>
                <h3>Lessons learned porting from SQL Server to SQLite</h3>
                <br/>
-               <p>Collations</p>
                <p>Memoization</p>
-               <p>Clustered indexes/merge joins and the <code>rowid</code></p>
-               <p>Materializing subqueries</p>
+               <p>Materializing subqueries and nested for loop joins</p>
+               <p><code>rowid</code></p>
             </section>
 
             <section>
@@ -194,6 +193,13 @@ with conn:
                <p>Reliable automation</p>
                <p>Many hours faster even if individual parts were slower</p>
                <p>openpyxl replaced fragile Excel APIs</p>
+            </section>
+
+            <section>
+               <h3>Inger</h3>
+               <br/>
+               <p>ETL: data collection, parsing, stats</p>
+               <p>Flask app: runs against the 3NF database</p>
             </section>
 
             <section>
@@ -211,8 +217,6 @@ with conn:
                <p>Primary keys need to be looked up centrally</p>
                <p>Heavy cache rates in the workers and bulk inserts</p>
             </section>
-
-
 
          </div>
       </div>
