@@ -131,7 +131,7 @@ with conn:
                <p>Memoizing the adapter and converter functions is often a speed and memory win in ETL</p>
                <p><code>functools.lru_cache</code></p>
                <p>You can't mutate cached values but that typically isn't a problem</p>
-               <p>Candidates include <code>datetime</code>, <code>Decimal</code>
+               <p>Candidates include <code>datetime</code>, JSON, <code>Decimal</code>
             </section>
 
             <section>
@@ -207,6 +207,15 @@ with conn:
                <br/>
                <p>events.sqlite3: 34GB, 67MM rows of gzipped JSON, 15 minutes to SELECT COUNT(*)</p>
                <p>db.sqlite3: 1.2GB, 3NF integers and strings</p>
+            </section>
+
+            <section>
+               <h3>Inger</h3>
+               <h4>Events re-parse</h4>
+               <br/>
+               <p>Master API server opens 3NF database</p>
+               <p>Worker API servers open events.sqlite3</p>
+               <p>Workers POST their results back to the master server</p>
             </section>
 
             <section>
