@@ -55,6 +55,14 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
             </section>
 
             <section>
+               <h3>When should you use SQLite?</h3>
+               <h4>It sets a high bar.</h4>
+               <br/>
+               <p>Consider using it as your data's complexity goes beyond Python lists and dicts</p>
+               <p>Keep using it until you need features, concurrency or speed it doesn't have</p>
+            </section>
+
+            <section>
                <h3>Why should you use SQLite?</h3>
                <h4>It's an investment in yourself and your career.</h4>
                <br/>
@@ -175,14 +183,18 @@ with conn:
 
             <section>
                <h3><a href="https://gilslotd.com/blog/lessons_learned_porting_sql_server_sqlite">Lessons learned porting from SQL Server to SQLite</a></h3>
+               <br/>
+               <p>ETL: Collect and clean up data</p>
+               <p>Output: Excel</p>
             </section>
 
             <section>
                <h3>Lessons learned porting from SQL Server to SQLite</h3>
                <br/>
                <p>Memoization</p>
-               <p>Materializing subqueries and nested for loop joins</p>
-               <p><code>rowid</code></p>
+               <p>SQL Server: merge joins and clustered indexes</p>
+               <p>SQLite: nested for loop joins, materializing joins and subqueries</p>
+               <p>Run updates/deletes against the <code>rowid</code></p>
             </section>
 
             <section>
