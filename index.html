@@ -63,11 +63,76 @@ document.getElementsByTagName( 'head' )[0].appendChild( link );
             </section>
 
             <section>
+               <h4>It pairs well with Python:</h4>
+               <h4>SQLite concurrency model</h4>
+               <table>
+                  <thead>
+                     <tr>
+                        <th></th>
+                        <th>
+                           Default (Old)
+                        </th>
+                        <th>
+                           New
+                        </th>
+                     </tr>
+                  </thead>
+                  <tbody>
+                     <tr>
+                        <td>
+                           <a href="https://www.sqlite.org/pragma.html#pragma_journal_mode"><code>PRAGMA journal_mode=</code></a>
+                        </td>
+                        <td>
+                           <code>DELETE</code>
+                        </td>
+                        <td>
+                           <code>WAL</code>
+                        </td>
+                     </tr>
+                     <tr>
+                        <td>
+                           Concurrent reader processes
+                        </td>
+                        <td>
+                           <span style="color: lightgreen">✔</span>
+                        </td>
+                        <td>
+                           <span style="color: lightgreen">✔</span>
+                        </td>
+                     </tr>
+                     <tr>
+                        <td>
+                           Concurrent writer processes
+                        </td>
+                        <td>
+                           <span style="color: red">✘</span>
+                        </td>
+                        <td>
+                           <span style="color: red">✘</span>
+                        </td>
+                     </tr>
+                     <tr>
+                        <td>
+                           Reading while writing
+                        </td>
+                        <td>
+                           <span style="color: red">✘</span>
+                        </td>
+                        <td>
+                           <span style="color: lightgreen">✔</span>
+                        </td>
+                     </tr>
+                  </tbody>
+               </table>
+            </section>
+
+            <section>
                <h3>Why should you use SQLite?</h3>
                <h4>It's an investment in yourself and your career.</h4>
                <br/>
                <p>Learn the common subset of SQL and relational databases</p>
                <p>What you learn with SQLite can be used on future projects, even with different databases</p>
+</a></p>
             </section>
 
             <section>
@@ -130,6 +195,7 @@ with conn:
 
                <p><code>register_adapter</code>: Store Python objects in database</p>
                <p><code>register_converter</code>: Re-hydrate Python objects from the database</p>
+					<p>Not an ORM</p>
             </section>
 
             <section>
@@ -165,6 +231,171 @@ with conn:
             </section>
 
             <section>
+               <h2>Things to know about SQLite</h2>
+            </section>
+
+            <section>
+               <h3>Things to know about SQLite</h3>
+               <h4>Type affinity</h4>
+               <br/>
+
+               <p>Affinity is how data is stored on disk</p>
+               <p>Any kind of value can be stored in any column</p>
+               <p>Column types are just a suggestion on what affinity to use</p>
+            </section>
+
+				<section>
+               <pre><code class="hljs sql">CREATE TABLE keys (
+    key_id INTEGER PRIMARY KEY,
+    email TEXT,
+    pubkey SSH_PUBLIC_KEY,
+    privkey SSH_PRIVATE_KEY
+);
+</code></pre>
+				</section>
+
+            <section>
+               <h3>Things to know about SQLite</h3>
+               <h4>B-trees</h4>
+               <br/>
+
+               <p>Table data is kept in a B-tree</p>
+               <p>The key for a table tree is the rowid</p>
+               <p>Use <code>INTEGER PRIMARY KEY</code> whenever possible</p>
+            </section>
+
+				<section>
+					<p><a href="https://www.sqlite.org/optoverview.html">The SQLite Query Optimizer Overview</a></p>
+				</section>
+
+            <section>
+               <p>When no indices are available to aid the evaluation of a query, SQLite might create an automatic index that lasts only for the duration of a single SQL statement. [...]</p>
+            </section>
+
+            <section>
+               <h3>Things to know about SQLite</h3>
+               <h4>Automatic indexing</h4>
+               <br/>
+
+               <p>The query planner can create a temporary index</p>
+               <p>This can be disabled</p>
+               <p>Read the logs to find index suggestions</p>
+            </section>
+
+            <section>
+               <p>[...] Since the cost of constructing the automatic index is $O(N\log{}N)$ (where $N$ is the number of entries in the table) and the cost of doing a full table scan is only $O(N)$, an automatic index will only be created if SQLite expects that the lookup will be run more than $\log{}N$ times during the course of the SQL statement.</p>
+            </section>
+
+            <section>
+               <h4>Time complexity, nested for loop</h4>
+               <table>
+                  <thead>
+                     <tr>
+                        <th>Big O</th>
+                        <th>Step</th>
+                        <th>a=10<sup>5</sup>, b=10<sup>5</sup></th>
+                        <th>a=50, b=10<sup>5</sup></th>
+                        <th>a=3, b=10<sup>5</sup></th>
+                     </tr>
+                  </thead>
+                  <tbody>
+                     <tr>
+                        <td>$O(ab)$</td>
+                        <td>Loop</td>
+                        <td>10<sup>10</sup></td>
+                        <td>10<sup>6.7</sup></td>
+                        <td>10<sup>5.5</sup></td>
+                     </tr>
+                  </tbody>
+               </table>
+            </section>
+            <section>
+               <h4>Time complexity, index join</h4>
+               <table>
+                  <thead>
+                     <tr>
+                        <th>Big O</th>
+                        <th>Step</th>
+                        <th>a=10<sup>5</sup>, b=10<sup>5</sup></th>
+                        <th>a=50, b=10<sup>5</sup></th>
+                        <th>a=3, b=10<sup>5</sup></th>
+                     </tr>
+                  </thead>
+                  <tbody>
+                     <tr>
+                        <td>$O(b\log{}b)$</td>
+                        <td>Index creation</td>
+                        <td>10<sup>5.7</sup></td>
+                        <td>10<sup>5.7</sup></td>
+                        <td>10<sup>5.7</sup></td>
+                     </tr>
+                     <tr>
+                        <td>$O(a\log{}b)$</td>
+                        <td>Index join</td>
+                        <td>10<sup>5.7</sup></td>
+                        <td>250</td>
+                        <td>15</td>
+                     </tr>
+                     <tr>
+                        <td></td>
+                        <td>Sum</td>
+                        <td>10<sup>6.0</sup></td>
+                        <td>10<sup>5.7</sup></td>
+                        <td>10<sup>5.7</sup></td>
+                     </tr>
+                  </tbody>
+               </table>
+            </section>
+            <section>
+               <h4>Time complexity, delta</h4>
+               <table>
+                  <thead>
+                     <tr>
+                        <th>Join method</th>
+                        <th>a=10<sup>5</sup>, b=10<sup>5</sup></th>
+                        <th>a=50, b=10<sup>5</sup></th>
+                        <th>a=3, b=10<sup>5</sup></th>
+                     </tr>
+                  </thead>
+                  <tbody>
+                     <tr>
+                        <td>Nested for loop</td>
+                        <td>10<sup>10</sup></td>
+                        <td>10<sup>6.7</sup></td>
+                        <td>10<sup>5.5</sup></td>
+                     </tr>
+                     <tr>
+                        <td>Automatic index</td>
+                        <td>10<sup>6.0</sup></td>
+                        <td>10<sup>5.7</sup></td>
+                        <td>10<sup>5.7</sup></td>
+                     </tr>
+                     <tr>
+                        <td></td>
+                        <td><span style="color: lightgreen">✔</span></td>
+                        <td><span style="color: lightgreen">✔</span></td>
+                        <td><span style="color: red">✘</span></td>
+                     </tr>
+                  </tbody>
+               </table>
+            </section>
+
+            <section>
+               <h2>The lesson?</h2>
+               <h3>$O(n^2)$ sucks!</h3>
+            </section>
+
+            <section>
+               <h3>Things to know about SQLite</h3>
+               <h4>Automatic indexing</h4>
+               <br/>
+
+               <p>Up-to-date table statistics helps</p>
+               <p>The query planner tries different join orders, which helps</p>
+               <p>This is the SQLite version of a hash join</p>
+            </section>
+
+            <section>
                <h2>Where I've used SQLite</h2>
             </section>
 
@@ -194,7 +425,6 @@ with conn:
                <p>Memoization</p>
                <p>SQL Server: merge joins and clustered indexes</p>
                <p>SQLite: nested for loop joins, materializing joins and subqueries</p>
-               <p>Run updates/deletes against the <code>rowid</code></p>
             </section>
 
             <section>
